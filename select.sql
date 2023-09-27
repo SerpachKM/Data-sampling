@@ -1,43 +1,50 @@
-SELECT genre_id, COUNT(artist_id) FROM artist_in_genre
-GROUP BY genre_id;
+select track_name, track_duration
+from tracks
+where track_duration = (select max(track_duration) from tracks);
 
-SELECT COUNT(id) FROM Track_List
-WHERE album_id IN(
-    SELECT id FROM album_List
-	WHERE release_date BETWEEN '2019-01-01' AND '2020-12-31');
+select track_name, track_duration
+from tracks
+where track_duration >= 210;
 
-SELECT album_id, AVG(track_time) FROM Track_List
-GROUP BY album_id;
+select collection_name, collection_year 
+from collections
+where collection_year between 2018 and 2022;
 
-SELECT DISTINCT a.name FROM artist_list AS a
-LEFT JOIN artist_album AS aa ON a.id = aa.id
-LEFT JOIN album_List AS am ON aa.id = am.id
-WHERE release_date < '2020-01-01';
+select executor_name
+from executors
+where executor_name not like '% %';
 
-SELECT DISTINCT c.name FROM collection_List AS c
-LEFT JOIN artist_list AS a ON c.id = a.id
-WHERE a.id = 3;
+select track_name
+from tracks
+where lower(track_name) like 'мой %' or lower(track_name) like '% мой' or lower(track_name) like '% мой %' or lower(track_name) like 'мой' 
+or lower(track_name) like 'my %' or lower(track_name) like '% my' or lower(track_name) like '% my %' or lower(track_name) like 'my';
 
-SELECT DISTINCT a.name FROM album_List AS a
-LEFT JOIN artist_album AS aa ON a.id = aa.id
-LEFT JOIN artist_in_genre AS ag ON aa.id = ag.artist_id
-GROUP BY a.name
-HAVING COUNT(ag.artist_id) > 1;
+#Задание 3
 
-SELECT t.name FROM Track_List AS t
-LEFT JOIN collection_album_track AS cat ON t.id = cat.track_id
-WHERE cat.track_id IS NULL;
+select genre_name, count (executor_name) from executors e 
+join genres_executors ge  on e.executor_id = ge.executor_id 
+join genres g on ge.genre_id = g.genre_id 
+group by g.genre_id;
 
-SELECT a.name FROM artist_list AS a
-JOIN artist_album AS aa ON a.id = aa.id
-JOIN album_List AS am ON aa.album_id = am.id
-JOIN Track_List AS t ON am.id = t.album_id
-WHERE t.track_time = (SELECT MIN(track_time) FROM Track_List);
+select count(track_name) from tracks t 
+join albums a on a.album_id = t.album_id 
+where a.album_year between 2019 and 2020;
 
-SELECT DISTINCT album_name FROM album_List AS a
-INNER JOIN Track_List AS t ON a.id = t.album_id
-WHERE album_id IN(
-	SELECT COUNT(album_id) FROM Track_List
-	GROUP BY album_id
-	ORDER BY album_id
-	LIMIT 1);
+select album_name, AVG(track_duration) from tracks t 
+join albums a on a.album_id = t.album_id 
+group by a.album_name;
+
+select executor_name from executors e 
+where executor_name not in (
+select executor_name from albums a 
+join executors_albums ea on a.album_id = ea.album_id 
+join executors e on ea.executor_id = e.executor_id
+where a.album_year = 2020);
+
+select collection_name from collections c 
+join collections_tracks ct on c.collection_id = ct.collection_id 
+join tracks t on ct.track_id = t.track_id 
+join albums a on t.album_id = a.album_id 
+join executors_albums ea on a.album_id = ea.album_id 
+join executors e on ea.executor_id = e.executor_id 
+where e.executor_name like 'Ramstein';
