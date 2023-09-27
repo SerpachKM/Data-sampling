@@ -1,40 +1,46 @@
-create table if not exists artist_list(
-	id serial primary key,
-	Name varchar(255) not null,
-	Alias varchar(80) not null);
-	
-create table if not exists artist_in_genre(
-	id serial primary key,
-	artist_id integer not null references artist_list(id),
-	genre_id integer not null references Genre_List(id));
-	
-create table if not exists Genre_list(
-	id serial primary key, 
-	Genre_Name  varchar(80) not null,
-							
-create table if not exists artist_album(
-	id  serial primary key,
-	artist_id integer not null references artist_list(id),
-	album_id integer not null references album_List(id));
-	
-create table if not exists album_List (
-	id serial primary key,
-	album_name varchar(80) not null,
-	release_date varchar(80) not null);
-	
-create table if not exists Track_List (
-	id serial primary key,
-	album_id integer references album_List(id)
-	track_name varchar(80) not null,
-	track_time varchar(80) not null);
-		
-create table if not exists collection_List(
-	id serial primary key,
-	collection_name varchar(60) not null,
-	release_date  not null);
-							
-create table if not exists collection_album_track(
-	id serial primary key,
-	collection_id integer not null references collection_List(id),
-	album_id integer not null references album_List(id);
-	track_id integer not null references Track_List(id));
+CREATE TABLE IF NOT EXISTS genres (
+	genre_id serial PRIMARY KEY,
+	genre_name varchar(50) 
+);
+
+CREATE TABLE IF NOT EXISTS executors (
+	executor_id serial PRIMARY KEY,
+	executor_name varchar(50) 
+);
+
+CREATE TABLE IF NOT EXISTS genres_executors (
+	genre_executor_id serial PRIMARY KEY,
+	genre_id int REFERENCES genres(genre_id),
+	executor_id int REFERENCES executors(executor_id)
+);
+
+CREATE TABLE IF NOT EXISTS albums (
+	album_id serial PRIMARY KEY,
+	album_name varchar(50) NOT NULL,
+	album_year int NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS executors_albums (
+	executor_album_id serial PRIMARY KEY,
+	executor_id int REFERENCES executors(executor_id),
+	album_id int REFERENCES albums(album_id)
+);
+
+CREATE TABLE IF NOT EXISTS tracks (
+	track_id serial PRIMARY KEY,
+	track_name varchar(50) NOT NULL,
+	track_duration int NOT NULL,
+	album_id int REFERENCES albums(album_id)
+);
+
+CREATE TABLE IF NOT EXISTS collections (
+	collection_id serial PRIMARY KEY,
+	collection_name varchar(50) NOT NULL,
+	collection_year int NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS collections_tracks (
+	collections_tracks_id serial PRIMARY KEY,
+	collection_id int REFERENCES collections(collection_id),
+	track_id int REFERENCES tracks(track_id)
+);
